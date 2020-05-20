@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.128
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MdiHighDpiTest_NetCore", "MdiHighDpiTest_NetCore\MdiHighDpiTest_NetCore.csproj", "{F3CD0AD3-E226-4918-B30F-3D9C077BA321}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MdiHighDpiTest_NetFramework", "MdiHighDpiTest_NetFramework\MdiHighDpiTest_NetFramework.csproj", "{A777255D-94E7-4408-8CAE-558F689F12B5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F3CD0AD3-E226-4918-B30F-3D9C077BA321}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3CD0AD3-E226-4918-B30F-3D9C077BA321}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3CD0AD3-E226-4918-B30F-3D9C077BA321}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3CD0AD3-E226-4918-B30F-3D9C077BA321}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A777255D-94E7-4408-8CAE-558F689F12B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A777255D-94E7-4408-8CAE-558F689F12B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A777255D-94E7-4408-8CAE-558F689F12B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A777255D-94E7-4408-8CAE-558F689F12B5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BACC03A7-5C68-46AC-9389-588496905730}
+	EndGlobalSection
+EndGlobal
