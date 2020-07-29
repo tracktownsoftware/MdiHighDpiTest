@@ -99,9 +99,13 @@ namespace MdiDpiTest_NetFramework
         {
             if (MdiChildren.Length > 1)
             {
+                var fudgeFactor = .80; // Account for buggy .Net HighDpi conversion values
                 Form firstChild = firstChild = MdiChildren[0];
+                int totalChildWidths = firstChild.Width;
+                int totalChildHeights = firstChild.Height;
                 bool isTiledVertical;
                 bool isTiledHorizontal;
+
                 switch (MdiChildren.Length)
                 {
                     case 2:
@@ -110,8 +114,6 @@ namespace MdiDpiTest_NetFramework
                         isTiledHorizontal = (bool)(firstChild.Location.X == 0);
                         if (isTiledVertical || isTiledHorizontal)
                         {
-                            int totalChildWidths = firstChild.Width;
-                            int totalChildHeights = firstChild.Height;
                             for (int i = 1; i < MdiChildren.Length; i++)
                             {
                                 var nextChild = MdiChildren[i];
@@ -128,7 +130,7 @@ namespace MdiDpiTest_NetFramework
                                 if (nextChild.Location.Y != 0)
                                     isTiledVertical = false;
                             }
-                            var fudgeFactor = .80; // acount for buggy .net dpi conversion values
+
                             if (isTiledVertical && (totalChildWidths > fudgeFactor * ClientSize.Width))
                             {
                                 Debug.WriteLine("IsTileVertical totalChildWidths: " + totalChildWidths + " ClientSize.Width: " + ClientSize.Width);
@@ -146,14 +148,6 @@ namespace MdiDpiTest_NetFramework
                         int countLeftAligned = 0;
                         isTiledVertical = true;
                         isTiledHorizontal = true;
-                        foreach (var childForm in MdiChildren)
-                        {
-                            if (childForm.Location.X == 0)
-                                countLeftAligned++;
-                            if (childForm.Location.Y == 0)
-                                countTopAligned++;
-                        }
-
                         for (int i = 1; i < MdiChildren.Length; i++)
                         {
                             var nextChild = MdiChildren[i];
@@ -163,17 +157,19 @@ namespace MdiDpiTest_NetFramework
                                 isTiledHorizontal = false;
                                 break;
                             }
+                            totalChildWidths += nextChild.Width;
+                            totalChildHeights += nextChild.Height;
                             if (nextChild.Location.X == 0)
                                 countLeftAligned++;
                             if (nextChild.Location.Y == 0)
                                 countTopAligned++;
                         }
-                        if (isTiledVertical && (countTopAligned >= countLeftAligned))
+                        if (isTiledVertical && (countTopAligned >= countLeftAligned) && (totalChildWidths > fudgeFactor * ClientSize.Width))
                         {
                             Debug.WriteLine("IsTileVertical > 3");
                             this.LayoutMdi(MdiLayout.TileVertical);
                         }
-                        else if (isTiledHorizontal && (countLeftAligned > countTopAligned))
+                        else if (isTiledHorizontal && (countLeftAligned > countTopAligned) && (totalChildHeights > fudgeFactor * ClientSize.Height))
                         {
                             Debug.WriteLine("IsTileHorizontal > 3");
                             this.LayoutMdi(MdiLayout.TileHorizontal);
