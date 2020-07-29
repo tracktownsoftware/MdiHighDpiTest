@@ -97,42 +97,90 @@ namespace MdiDpiTest_NetFramework
 
         private void CheckMDILayout()
         {
-            if (MdiChildren.Length > 1)
+            if (MdiChildren.Length > 0)
             {
-                var firstChild = MdiChildren[0];
-                bool isTiledVertical = (bool)(firstChild.Location.Y == 0);
-                bool isTiledHorizontal = (bool)(firstChild.Location.X == 0);
-                if (isTiledVertical || isTiledHorizontal)
+                Form firstChild = firstChild = MdiChildren[0];
+                bool isTiledVertical;
+                bool isTiledHorizontal;
+                switch (MdiChildren.Length)
                 {
-                    int totalChildWidths = firstChild.Width;
-                    int totalChildHeights = firstChild.Height;
-                    for (int i = 1; i < MdiChildren.Length; i++)
-                    {
-                        var nextChild = MdiChildren[i];
-                        totalChildWidths += nextChild.Width;
-                        totalChildHeights += nextChild.Height;
-                        if (firstChild.Size != nextChild.Size)
+                    case 2:
+                    case 3:
+                        isTiledVertical = (bool)(firstChild.Location.Y == 0);
+                        isTiledHorizontal = (bool)(firstChild.Location.X == 0);
+                        if (isTiledVertical || isTiledHorizontal)
                         {
-                            isTiledVertical = false;
-                            isTiledHorizontal = false;
-                            break;
+                            int totalChildWidths = firstChild.Width;
+                            int totalChildHeights = firstChild.Height;
+                            for (int i = 1; i < MdiChildren.Length; i++)
+                            {
+                                var nextChild = MdiChildren[i];
+                                totalChildWidths += nextChild.Width;
+                                totalChildHeights += nextChild.Height;
+                                if (firstChild.Size != nextChild.Size)
+                                {
+                                    isTiledVertical = false;
+                                    isTiledHorizontal = false;
+                                    break;
+                                }
+                                if (nextChild.Location.X != 0)
+                                    isTiledHorizontal = false;
+                                if (nextChild.Location.Y != 0)
+                                    isTiledVertical = false;
+                            }
+                            var fudgeFactor = .80; // acount for buggy .net dpi conversion values
+                            if (isTiledVertical && (totalChildWidths > fudgeFactor * ClientSize.Width))
+                            {
+                                Debug.WriteLine("IsTileVertical totalChildWidths: " + totalChildWidths + " ClientSize.Width: " + ClientSize.Width);
+                                this.LayoutMdi(MdiLayout.TileVertical);
+                            }
+                            else if (isTiledHorizontal && (totalChildHeights > fudgeFactor * ClientSize.Height))
+                            {
+                                Debug.WriteLine("IsTileVertical totalChildHeights: " + totalChildHeights + " ClientSize.Height: " + ClientSize.Height);
+                                this.LayoutMdi(MdiLayout.TileHorizontal);
+                            }
                         }
-                        if (nextChild.Location.X != 0)
-                            isTiledHorizontal = false;
-                        if (nextChild.Location.Y != 0)
-                            isTiledVertical = false;
-                    }
-                    var fudgeFactor = .80; // acount for buggy .net dpi conversion values
-                    if (isTiledVertical && (totalChildWidths > fudgeFactor * ClientSize.Width))
-                    {
-                        Debug.WriteLine("IsTileVertical totalChildWidths: " + totalChildWidths + " ClientSize.Width: " + ClientSize.Width);
-                        this.LayoutMdi(MdiLayout.TileVertical);
-                    }
-                    else if (isTiledHorizontal && (totalChildHeights > fudgeFactor * ClientSize.Height))
-                    {
-                        Debug.WriteLine("IsTileVertical totalChildHeights: " + totalChildHeights + " ClientSize.Height: " + ClientSize.Height);
-                        this.LayoutMdi(MdiLayout.TileHorizontal);
-                    }
+                        break;
+                    case int n when (n % 2 == 0):
+                        int countTopAligned = 0;
+                        int countLeftAligned = 0;
+                        isTiledVertical = true;
+                        isTiledHorizontal = true;
+                        foreach (var childForm in MdiChildren)
+                        {
+                            if (childForm.Location.X == 0)
+                                countLeftAligned++;
+                            if (childForm.Location.Y == 0)
+                                countTopAligned++;
+                        }
+
+                        for (int i = 1; i < MdiChildren.Length; i++)
+                        {
+                            var nextChild = MdiChildren[i];
+                            if (firstChild.Size != nextChild.Size)
+                            {
+                                isTiledVertical = false;
+                                isTiledHorizontal = false;
+                                break;
+                            }
+                            if (nextChild.Location.X == 0)
+                                countLeftAligned++;
+                            if (nextChild.Location.Y == 0)
+                                countTopAligned++;
+                        }
+                        if (isTiledVertical && (countTopAligned >= countLeftAligned))
+                        {
+                            Debug.WriteLine("IsTileVertical > 3");
+                            this.LayoutMdi(MdiLayout.TileVertical);
+                        }
+                        else if (isTiledHorizontal && (countLeftAligned > countTopAligned))
+                        {
+                            Debug.WriteLine("IsTileHorizontal > 3");
+                            this.LayoutMdi(MdiLayout.TileHorizontal);
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }
