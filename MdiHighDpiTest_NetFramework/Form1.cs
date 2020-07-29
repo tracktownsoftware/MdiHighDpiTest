@@ -97,7 +97,7 @@ namespace MdiDpiTest_NetFramework
 
         private void CheckMDILayout()
         {
-            if (MdiChildren.Length > 0)
+            if (MdiChildren.Length > 1)
             {
                 Form firstChild = firstChild = MdiChildren[0];
                 bool isTiledVertical;
